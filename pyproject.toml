@@ -1,0 +1,39 @@
+[tool.poetry]
+name = "authorization"
+version = "0.1.0"
+description = ""
+authors = ["George Dudaev <georgeduday@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.105.0"
+uvicorn = "^0.24.0.post1"
+pydantic-settings = "^2.1.0"
+sqlalchemy = "^2.0.23"
+alembic = "^1.13.0"
+pydantic = {extras = ["email"], version = "^2.5.2"}
+asyncpg = "^0.29.0"
+greenlet = "^v3.0.2"
+python-jose = {extras = ["cryptography"], version = "^3.3.0"}
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+python-multipart = "^0.0.6"
+gunicorn = "^21.2.0"
+
+[tool.poetry.group.dev.dependencies]
+flake8 = "^6.1.0"
+isort = "^5.13.2"
+pytest = "^7.4.3"
+pytest-asyncio = "^0.23.2"
+httpx = "^0.25.2"
+coverage = "^7.3.3"
+
+[tool.pytest.ini_options]
+pythonpath = [".", "app"]
+asyncio_mode = "auto"
+python_files = ["*_test.py", "test_*.py", "*_tests.py"]
+addopts = ["-p", "no:warnings"]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

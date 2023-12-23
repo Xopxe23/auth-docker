@@ -1,0 +1,26 @@
+[
+  {
+    "id": "b3754269-d76e-4cfa-b2b8-e39e39e8c8a2",
+    "hashed_password": "$2b$12$agY.yZ91nAPiTEGknfxGMOoPkC1KHqE2MxVOLbRzM2A0JVf0owXU6",
+    "email": "georgeduday@gmail.com",
+    "is_active": true,
+    "is_superuser": false,
+    "is_verified": true
+  },
+  {
+    "id": "3dd519a2-76ed-40fd-9aa7-143bf26fc806",
+    "hashed_password": "$$2b$12$o3UIsdS0Yto06qkTWNTRZOBESpY9HvftW50sLstZXya0yFfq1xrdS",
+    "email": "test@test.com",
+    "is_active": true,
+    "is_superuser": false,
+    "is_verified": false
+  },
+  {
+    "id": "2570b592-13a0-4d44-9ebe-9024a9b7e642",
+    "hashed_password": "$2b$12$6srbd1eudDa.K6lTyyf0Fu.PSGw1OaXlR2DPuNDRkj9n9qZVfOX/i",
+    "email": "admin@admin.com",
+    "is_active": true,
+    "is_superuser": true,
+    "is_verified": true
+  }
+]

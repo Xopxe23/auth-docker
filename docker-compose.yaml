@@ -1,0 +1,23 @@
+version: '3.7'
+
+services:
+
+  db:
+    image: postgres:latest
+    container_name: users_db
+    env_file:
+      - .env
+    ports:
+      - 5432:5432
+
+  users:
+    build:
+      context: .
+    container_name: users_app
+    env_file:
+      - .env
+    depends_on:
+      - db
+    command: [ "/users/app.sh" ]
+    ports:
+      - 80:80
