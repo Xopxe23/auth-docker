@@ -4,15 +4,14 @@ from uuid import UUID
 from fastapi import Depends, Response
 from jose import jwt
 
-from app.auth.models import RefreshToken, User
+from app.auth.models import RefreshToken, User, UserRole
 from app.auth.repositories import UserRepository, get_user_repository
-from app.auth.utils import CookieTransport, Hasher
+from app.auth.utils import Hasher
 from app.config import settings
 
 
 class UserService:
     hasher = Hasher
-    cookie_transport = CookieTransport
     token_lifetime = datetime.timedelta(minutes=1)
 
     def __init__(self, user_db: UserRepository):
@@ -23,6 +22,9 @@ class UserService:
 
     async def get_by_email(self, user_email: str) -> User | None:
         return await self.user_db.get_by_email(user_email)
+
+    async def get_by_phone_number(self, phone_number: str) -> User | None:
+        return await self.user_db.get_by_phone_number(phone_number)
 
     def verify(self, user: User, password: str) -> bool:
         return self.hasher.verify_password(password, user.hashed_password)
@@ -37,8 +39,8 @@ class UserService:
         created_user = await self.user_db.create(user_data)
         return created_user
 
-    def create_access_token(self, user_email: str) -> str | None:
-        data = {"sub": user_email}
+    def create_access_token(self, user_email: str, user_role: UserRole) -> str | None:
+        data = {"sub": user_email, "role": user_role.value}
         to_encode = data.copy()
         expire = datetime.datetime.now(datetime.UTC) + self.token_lifetime
         to_encode.update({"exp": expire})
@@ -49,7 +51,7 @@ class UserService:
         response.set_cookie(
             "ACCESS_TOKEN", access_token,
             httponly=True,
-            expires=datetime.datetime.now(datetime.UTC) + self.token_lifetime,  # + datetime.timedelta(hours=3)
+            expires=datetime.datetime.now(datetime.UTC) + self.token_lifetime,
         )
         response.set_cookie(
             "REFRESH_TOKEN", refresh_token,
@@ -66,7 +68,7 @@ class UserService:
         return await self.user_db.get_refresh_token(refresh_token)
 
     async def generate_tokens(self, user: User) -> dict[str, str]:
-        access_token = self.create_access_token(user.email)
+        access_token = self.create_access_token(user.email, user.role)
         refresh_token = self.hasher.generate_unique_string()
         await self.user_db.add_refresh_token(user.id, refresh_token)
         tokens = {
@@ -74,9 +76,6 @@ class UserService:
             "refresh_token": refresh_token
         }
         return tokens
-
-    async def get_all_users(self) -> list[User]:
-        return await self.user_db.get_all()
 
 
 async def get_user_service(user_db: UserRepository = Depends(get_user_repository)):

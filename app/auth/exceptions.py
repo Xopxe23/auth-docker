@@ -5,12 +5,17 @@ class ErrorCode:
     AUTHENTICATION_REQUIRED = "Authentication required"
     INVALID_TOKEN = "Invalid token"
     EMAIL_TAKEN = "Email is already taken"
+    PHONE_NUMBER_TAKEN = "Phone number is already taken"
     USER_NOT_EXISTS = "User not exists"
     INCORRECT_PASSWORD = "Incorrect password"
 
 
 class EmailTaken(BadRequest):
     DETAIL = ErrorCode.EMAIL_TAKEN
+
+
+class PhoneNumberTaken(BadRequest):
+    DETAIL = ErrorCode.PHONE_NUMBER_TAKEN
 
 
 class UserNotExists(BadRequest):

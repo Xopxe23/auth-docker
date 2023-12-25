@@ -3,7 +3,7 @@ import datetime
 from fastapi import APIRouter, Depends, Request, Response, status
 from fastapi.security import APIKeyCookie
 
-from app.auth.exceptions import EmailTaken, IncorrectPassword, InvalidToken, UserNotExists
+from app.auth.exceptions import EmailTaken, IncorrectPassword, InvalidToken, PhoneNumberTaken, UserNotExists
 from app.auth.responses import StatusResponse, UserResponse
 from app.auth.schemas import UserCreateSchema, UserLoginSchema
 from app.auth.services import UserService, get_user_service
@@ -38,6 +38,9 @@ async def register(
     existing_user = await user_service.get_by_email(user_data.email)
     if existing_user:
         raise EmailTaken
+    existing_user = await user_service.get_by_phone_number(user_data.phone_number)
+    if existing_user:
+        raise PhoneNumberTaken
     user_data = user_data.model_dump()
     await user_service.create(user_data)
     return StatusResponse
@@ -97,7 +100,7 @@ async def get_me(
     if token is None:
         raise InvalidToken
     token_data = user_service.parse_token(token)
-    email = token_data.get("email")
+    email = token_data.get("sub")
     if email is None:
         raise InvalidToken
     user = await user_service.get_by_email(email)

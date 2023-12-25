@@ -31,6 +31,12 @@ class UserRepository:
         )
         return await self._get_user(statement)
 
+    async def get_by_phone_number(self, phone_number: str) -> User | None:
+        statement = select(self.user_table).where(
+            self.user_table.phone_number == phone_number
+        )
+        return await self._get_user(statement)
+
     async def create(self, create_dict: dict) -> User:
         user = self.user_table(**create_dict)
         self.session.add(user)

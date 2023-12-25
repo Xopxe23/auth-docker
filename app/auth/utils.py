@@ -1,7 +1,6 @@
 import datetime
 import secrets
 
-from fastapi import Response, status
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 
@@ -28,38 +27,14 @@ class Hasher:
         try:
             payload = jwt.decode(token, settings.SECRET, algorithms=[settings.ALGORITHM])
             email: str = payload.get("sub")
+            role: str = payload.get("role")
             expired: datetime.datetime = payload.get("exp")
             if email is None:
                 return None
         except JWTError:
             return None
         return {
-            "email": email,
-            "exp": expired
+            "sub": email,
+            "exp": expired,
+            "role": role
         }
-
-
-class CookieTransport:
-
-    @classmethod
-    def get_login_response(cls, token: str) -> Response:
-        response = Response(status_code=status.HTTP_204_NO_CONTENT)
-        return cls._set_login_cookie(response, token)
-
-    @classmethod
-    def get_logout_response(cls) -> Response:
-        response = Response(status_code=status.HTTP_204_NO_CONTENT)
-        return cls._set_logout_cookie(response)
-
-    @classmethod
-    def _set_login_cookie(cls, response: Response, token: str) -> Response:
-        response.set_cookie("ACCESS_TOKEN", token)
-        return response
-
-    @classmethod
-    def _set_logout_cookie(cls, response: Response) -> Response:
-        response.set_cookie(
-            key="ACCESS_TOKEN",
-            value="",
-        )
-        return response

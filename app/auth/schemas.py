@@ -1,4 +1,8 @@
+import re
+
 from pydantic import BaseModel, EmailStr, field_validator
+
+from app.auth.models import UserRole
 
 
 class PasswordMixin(BaseModel):
@@ -21,6 +25,15 @@ class PasswordMixin(BaseModel):
 
 class UserCreateSchema(PasswordMixin):
     email: EmailStr
+    phone_number: str
+    role: UserRole
+
+    @field_validator('phone_number')
+    def validate_phone_number(cls, phone_number):
+        pattern = r'^\d{10}$'  # Паттерн: состоит из 10 цифр
+        if not re.match(pattern, phone_number):
+            raise ValueError('Invalid phone number')
+        return phone_number
 
 
 class UserLoginSchema(BaseModel):

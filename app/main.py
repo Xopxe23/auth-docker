@@ -24,7 +24,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.middleware("http")(refresh_tokens_middleware)
+# app.middleware("http")(refresh_tokens_middleware)
 
 if __name__ == "__main__":
     uvicorn.run(
